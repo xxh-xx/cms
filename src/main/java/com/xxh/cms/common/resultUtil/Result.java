@@ -22,7 +22,6 @@ public class Result implements Serializable {
     private Result(ResultCode resultCode){
         this.code = resultCode.getCode();
         this.message = resultCode.getMessage();
-        this.data = data;
     }
 
     /**

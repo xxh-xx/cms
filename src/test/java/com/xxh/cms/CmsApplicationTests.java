@@ -10,19 +10,25 @@ import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDate;
+
+@Slf4j
 @SpringBootTest
 class CmsApplicationTests {
 
-    private Logger log = LoggerFactory.getLogger(CmsApplicationTests.class);
+    @Value("${page.size}")
+    private Integer size;
 
     @Test
     void contextLoads() {
 
+        System.out.println(size);
+        System.out.println(LocalDate.now());
 
     }
 

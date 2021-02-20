@@ -1,11 +1,16 @@
 package com.xxh.cms.article.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
-import java.util.Date;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -24,34 +29,22 @@ public class Info implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    /**
-     * 分类
-     */
+    @ApiModelProperty(name = "cid",value = "分类")
     private Integer cid;
 
-    /**
-     * 用于网页<title></title>
-     */
+    @ApiModelProperty(name = "title",value = "用于网页<title></title>")
     private String title;
 
-    /**
-     * 网页meta中的keyword
-     */
+    @ApiModelProperty(name = "keyw",value = "网页meta中的keyword")
     private String keyw;
 
-    /**
-     * 网页meta中的descreiption
-     */
+    @ApiModelProperty(name = "name",value = "网页meta中的descreiption")
     private String descr;
 
-    /**
-     * 文章的名
-     */
+    @ApiModelProperty(name = "cid",value = "文章的名")
     private String name;
 
-    /**
-     * 文章的子名
-     */
+    @ApiModelProperty(name = "subname",value = "文章的子名")
     private String subname;
 
     private String att;
@@ -60,19 +53,20 @@ public class Info implements Serializable {
 
     private String pic2;
 
-    /**
-     * 来源，出处
-     */
+    @ApiModelProperty(name = "source",value = "来源，出处")
     private String source;
 
     private String author;
 
     private String resume;
 
-    private Date date;
+    @TableField(fill = FieldFill.INSERT)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime date;
 
     private String content;
 
+    @TableField(fill = FieldFill.INSERT)
     private Integer hits;
 
 

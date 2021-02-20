@@ -5,6 +5,7 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * @author xxh
@@ -13,8 +14,9 @@ import java.time.LocalDate;
 public class MyMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
-        this.strictInsertFill(metaObject,"pubdate",LocalDate.class,LocalDate.now());
+        this.strictInsertFill(metaObject,"pubdate", LocalDate.class,LocalDate.now());
         this.strictInsertFill(metaObject,"hits",Integer.class,0);
+        this.strictInsertFill(metaObject,"date", LocalDateTime.class,LocalDateTime.now());
     }
 
     @Override

@@ -16,7 +16,7 @@ import springfox.documentation.spring.web.plugins.Docket;
  * @author xxh
  */
 @Configuration
-@ComponentScan(basePackages = "com.xxh.cms.article.mapper")
+@ComponentScan(basePackages = "com.xxh.cms.article.controller")
 public class Swagger2Config {
 
     @Bean

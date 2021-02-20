@@ -1,19 +1,17 @@
 package com.xxh.cms.article.controller;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.xxh.cms.article.common.crudUtil.SelectAndPage;
 import com.xxh.cms.article.common.document.DocumentQueryInfo;
 import com.xxh.cms.article.entity.Document;
 import com.xxh.cms.article.service.impl.DocumentServiceImpl;
 import com.xxh.cms.common.resultUtil.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.StringUtils;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,36 +26,32 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/document")
-@Api("管理Document")
+@Api("Document管理")
 public class DocumentController {
 
     @Autowired
     private DocumentServiceImpl docService;
+    @Autowired
+    private SelectAndPage selectAndPage;
 
-    @PostMapping("/getDocs")
+    @PostMapping("/getDocs/{current}")
     @ApiOperation("分页条件查询")
-    public Result getDocuments(DocumentQueryInfo docQueryInfo){
+    public Result getDocuments(@ApiParam(name = "docQueryInfo",value = "查询条件") @RequestBody(required = false) DocumentQueryInfo docQueryInfo,
+                               @ApiParam(name = "current",value = "当前页数") @PathVariable int current){
 
-        Page<Document> page = new Page<>(1,30);
-
-        QueryWrapper<Document> queryWrapper = new QueryWrapper<>();
-        Map<String,Object> allEqMap = new HashMap<>(5);
+        Map<String,Object> allEqMap = new HashMap<>(4);
         allEqMap.put("cid",docQueryInfo.getCid());
         allEqMap.put("att",docQueryInfo.getAtt());
         allEqMap.put("pubdate",docQueryInfo.getPubdate());
         allEqMap.put("hits",docQueryInfo.getHits());
-        queryWrapper.allEq(allEqMap,false);
+
         String title = docQueryInfo.getTitle();
         String author = docQueryInfo.getAuthor();
-        if (StringUtils.isNotBlank(title)){
-            queryWrapper.like("title",title);
-        }
+        Map<String, Object> likeMap = new HashMap<>(2);
+        likeMap.put("title",title);
+        likeMap.put("author",author);
 
-        if (StringUtils.isNotBlank(author)){
-            queryWrapper.like("author",author);
-        }
-
-        Page<Document> documentPage = docService.page(page, queryWrapper);
+        Page documentPage = selectAndPage.getPage(current, allEqMap, likeMap,docService);
 
         return Result.success(documentPage);
 
@@ -65,7 +59,7 @@ public class DocumentController {
 
     @PostMapping("/addDoc")
     @ApiOperation("添加")
-    public Result addDocument(Document document){
+    public Result addDocument(@ApiParam(name = "document",value = "添加数据") @RequestBody Document document){
         docService.save(document);
         return Result.success();
     }
