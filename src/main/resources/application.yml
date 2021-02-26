@@ -33,4 +33,4 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 page:
-  size: 30
+  size: 20

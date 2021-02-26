@@ -1,7 +1,6 @@
 package com.xxh.cms.common.config.spring;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -16,7 +15,6 @@ import springfox.documentation.spring.web.plugins.Docket;
  * @author xxh
  */
 @Configuration
-@ComponentScan(basePackages = "com.xxh.cms.article.controller")
 public class Swagger2Config {
 
     @Bean

@@ -3,11 +3,10 @@ package com.xxh.cms.common.resultUtil;
 /**
  * @author xxh
  */
-
 public enum ResultCode {
 
     SUCCESS(2000,"成功"),
-    FAILURE(1000,"失败");
+    PARAM_ERROR(1000,"参数错误");
 
     /**
      * code:状态码

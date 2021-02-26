@@ -3,12 +3,14 @@ package com.xxh.cms.article.common.crudUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.apache.commons.lang3.ObjectUtils;
+import com.xxh.cms.article.common.queryInfo.QueryInfo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author xxh
@@ -19,21 +21,62 @@ public class SelectAndPage {
     @Value("${page.size}")
     private Integer size;
 
-    public Page getPage(int current,Map<String,Object> eqMap, Map<String,Object> likeMap, IService service){
+    public Page getPage(int current, QueryInfo queryInfo, IService service,Boolean isDoc){
+
+        if (current<=0){
+            current = 1;
+        }
+
+        String nameColumn = "name";
+        String dateColumn = "date";
+        if (isDoc){
+            nameColumn = "title";
+            dateColumn = "pubdate";
+        }
+
         Page page = new Page(current,size);
-
         QueryWrapper queryWrapper = new QueryWrapper<>();
-        queryWrapper.allEq(eqMap,false);
 
-        Set<String> keySet = likeMap.keySet();
+        if (queryInfo!=null&&service!=null&&isDoc!=null){
 
-        for (String key:keySet){
-            if (ObjectUtils.isNotEmpty(likeMap.get(key))){
-                queryWrapper.like(key,likeMap.get(key));
+            Map<String,Object> allEqMap = new HashMap<>(4);
+            allEqMap.put("cid",queryInfo.getCid());
+            allEqMap.put("att",queryInfo.getAtt());
+            queryWrapper.allEq(allEqMap,false);
+
+
+            String name = queryInfo.getName();
+            String author = queryInfo.getAuthor();
+            if (StringUtils.isNotBlank(name)){
+                queryWrapper.like(nameColumn,name);
+            }
+            if (StringUtils.isNotBlank(author)){
+                queryWrapper.like("author",author);
+            }
+
+            LocalDate startDate = queryInfo.getStartDate();
+            LocalDate endDate = queryInfo.getEndDate();
+
+            if (startDate!=null&&endDate!=null){
+                queryWrapper.between(dateColumn,startDate,endDate);
+            }
+
+            Integer startHits = queryInfo.getStartHits();
+            Integer endHits = queryInfo.getEndHits();
+            if (startHits!=null&&endHits!=null){
+                queryWrapper.between("hits",startHits,endHits);
             }
         }
 
-        return (Page) service.page(page, queryWrapper);
+        return (Page) service.page(page,queryWrapper);
+    }
+
+    public Map<String,Object> baleResult(Page page){
+        Map<String,Object> resultData = new HashMap<>(16);
+        resultData.put("items",page.getRecords());
+        resultData.put("total",page.getTotal());
+        resultData.put("current",page.getCurrent());
+        return  resultData;
     }
 
 }
