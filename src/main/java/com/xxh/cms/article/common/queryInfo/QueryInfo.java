@@ -1,16 +1,18 @@
 package com.xxh.cms.article.common.queryInfo;
 
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * @author xxh
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
+@ApiModel(value = "QueryInfo对象",description = "文章的查询条件")
 public class QueryInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -26,9 +28,9 @@ public class QueryInfo implements Serializable {
 
     private String author;
 
-    private LocalDate startDate;
+    private LocalDateTime startDate;
 
-    private LocalDate endDate;
+    private LocalDateTime endDate;
 
     private Integer startHits;
 

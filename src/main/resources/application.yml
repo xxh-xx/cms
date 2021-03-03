@@ -26,11 +26,20 @@ spring:
       pool-prepared-statements: true
       max-open-prepared-statements: 20
       async-init: true
+  servlet:
+    multipart:
+      # 单个文件的最大值
+      max-file-size: 10MB
 
 #mybatis日志
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
+# 每页展示数量
 page:
   size: 20
+
+# 文件上传地址
+upload:
+  path: E:\Java\vs code projects\Front-end-cms\public\

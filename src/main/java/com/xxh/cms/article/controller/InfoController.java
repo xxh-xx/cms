@@ -7,11 +7,15 @@ import com.xxh.cms.article.common.queryInfo.QueryInfo;
 import com.xxh.cms.article.entity.Info;
 import com.xxh.cms.article.service.impl.InfoServiceImpl;
 import com.xxh.cms.common.resultUtil.Result;
+import com.xxh.cms.common.resultUtil.ResultCode;
+import com.xxh.cms.common.util.DataFormatUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,6 +26,7 @@ import java.util.Map;
  * @author xxh
  * @since 2021-02-19
  */
+@Component
 public class InfoController {
 
     private final InfoServiceImpl infoService;
@@ -33,23 +38,32 @@ public class InfoController {
         this.selectAndPage = selectAndPage;
     }
 
-    @ApiOperation("分页条件查询")
-    public Result getDocuments(@ApiParam(name = "infoQueryInfo",value = "查询条件") @RequestBody(required = false) QueryInfo queryInfo,
-                               @ApiParam(name = "current",value = "当前页数") @PathVariable int current){
+    public Result addInfo(Info info, List<String> picList){
 
-        return Result.success(getInfo(current,queryInfo));
+        int picMaxNumber = 2;
+        int picMinNumber = 1;
 
-    }
+        if (picList.size()>picMaxNumber||picList.size()<=0){
+            return Result.failure(ResultCode.PARAM_ERROR);
+        }
 
-    @ApiOperation("添加")
-    public Result addDocument(@ApiParam(name = "info",value = "添加数据") @RequestBody Info info){
+        if (picList.size()==picMaxNumber){
+            info.setPic(picList.get(0));
+            info.setPic2(picList.get(1));
+        }
+
+        if (picList.size()==picMinNumber){
+            info.setPic(picList.get(0));
+        }
+        info.setTitle(info.getName());
+        info.setAuthor("xxx");
         infoService.save(info);
         return Result.success();
     }
 
     public Map<String ,Object> getInfo(int current, QueryInfo queryInfo){
         Page page = selectAndPage.getPage(current, queryInfo, infoService, false);
-        return selectAndPage.baleResult(page);
+        return DataFormatUtil.pageDataHandle(page);
     }
 
 }

@@ -1,9 +1,9 @@
 package com.xxh.cms.article.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xxh.cms.article.entity.Document;
 import com.xxh.cms.article.mapper.DocumentMapper;
 import com.xxh.cms.article.service.IDocumentService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**

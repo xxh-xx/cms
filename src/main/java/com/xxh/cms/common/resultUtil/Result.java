@@ -1,5 +1,6 @@
 package com.xxh.cms.common.resultUtil;
 
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -8,6 +9,7 @@ import java.io.Serializable;
  * @author xxh
  */
 @Data
+@ApiModel(value = "Result对象",description = "返回字段")
 public class Result implements Serializable {
 
     private Integer code;

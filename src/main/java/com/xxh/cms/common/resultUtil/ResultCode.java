@@ -6,7 +6,8 @@ package com.xxh.cms.common.resultUtil;
 public enum ResultCode {
 
     SUCCESS(2000,"成功"),
-    PARAM_ERROR(1000,"参数错误");
+    PARAM_ERROR(1000,"参数错误"),
+    UPLOAD_IMAGE_ERROR(1001,"上传图片失败");
 
     /**
      * code:状态码

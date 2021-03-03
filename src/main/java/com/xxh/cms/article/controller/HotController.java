@@ -7,12 +7,15 @@ import com.xxh.cms.article.common.queryInfo.QueryInfo;
 import com.xxh.cms.article.entity.Hot;
 import com.xxh.cms.article.service.impl.HotServiceImpl;
 import com.xxh.cms.common.resultUtil.Result;
-import io.swagger.annotations.Api;
+import com.xxh.cms.common.resultUtil.ResultCode;
+import com.xxh.cms.common.util.DataFormatUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,7 +26,7 @@ import java.util.Map;
  * @author xxh
  * @since 2021-02-19
  */
-@Api("Hot管理")
+@Component
 public class HotController {
 
     private final HotServiceImpl hotService;
@@ -35,23 +38,32 @@ public class HotController {
         this.selectAndPage = selectAndPage;
     }
 
-    @ApiOperation("分页条件查询")
-    public Result getDocuments(@ApiParam(name = "hotQueryInfo",value = "查询条件") @RequestBody(required = false) QueryInfo queryInfo,
-                               @ApiParam(name = "current",value = "当前页数") @PathVariable int current){
+    public Result addHot(Hot hot, List<String> picList){
 
-        return Result.success(getHots(current,queryInfo));
+        int picMaxNumber = 2;
+        int picMinNumber = 1;
 
-    }
+        if (picList.size()>picMaxNumber||picList.size()<=0){
+            return Result.failure(ResultCode.PARAM_ERROR);
+        }
 
-    @ApiOperation("添加")
-    public Result addDocument(@ApiParam(name = "hot",value = "添加数据") @RequestBody Hot hot){
+        if (picList.size()==picMaxNumber){
+            hot.setPic(picList.get(0));
+            hot.setPic2(picList.get(1));
+        }
+
+        if (picList.size()==picMinNumber){
+            hot.setPic(picList.get(0));
+        }
+        hot.setTitle(hot.getName());
+        hot.setAuthor("xxx");
         hotService.save(hot);
         return Result.success();
     }
 
     public Map<String ,Object> getHots(int current, QueryInfo queryInfo){
         Page page = selectAndPage.getPage(current, queryInfo, hotService, false);
-        return selectAndPage.baleResult(page);
+        return DataFormatUtil.pageDataHandle(page);
     }
 
 }

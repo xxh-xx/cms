@@ -1,9 +1,9 @@
 package com.xxh.cms.article.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xxh.cms.article.entity.Hot;
 import com.xxh.cms.article.mapper.HotMapper;
 import com.xxh.cms.article.service.IHotService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**

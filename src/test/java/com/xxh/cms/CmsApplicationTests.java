@@ -12,23 +12,26 @@ import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @SpringBootTest
 class CmsApplicationTests {
 
-    @Value("${page.size}")
-    private Integer size;
-
     @Test
     void contextLoads() {
 
-        System.out.println(size);
-        System.out.println(LocalDate.now());
+        String str = "<img src=\"https://www.runoob.com/wp-content/uploads/2014/03/C5E357BD-65E3-4EB3-9D80-10D096F19287.jpg\"><img src=\"https://www.runoob.com/wp-content/uploads/2014/03/C5E357BD-65E3-4EB3-9D80-10D096F19287.jpg\">";
+        String regEx = "<img.*?>";
+        Pattern pattern = Pattern.compile(regEx);
+        Matcher matcher = pattern.matcher(str);
+
+        while (matcher.find()){
+            System.out.println(matcher.group());
+        }
 
     }
 
@@ -43,7 +46,7 @@ class CmsApplicationTests {
         gc.setOutputDir(projectPath + "/src/main/java");
         gc.setAuthor("xxh");
         gc.setOpen(false);
-        gc.setSwagger2(false); //实体属性 Swagger2 注解
+        gc.setSwagger2(true); //实体属性 Swagger2 注解
         gc.setDateType(DateType.ONLY_DATE);
         gc.setIdType(IdType.AUTO);
         mpg.setGlobalConfig(gc);
@@ -59,7 +62,7 @@ class CmsApplicationTests {
 
         // 包配置
         PackageConfig pc = new PackageConfig();
-        pc.setParent("com.xxh.cms.article");
+        pc.setParent("com.xxh.cms.project");
         pc.setEntity("entity");
         pc.setService("service");
         pc.setMapper("mapper");
@@ -72,7 +75,7 @@ class CmsApplicationTests {
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         strategy.setEntityLombokModel(true);
         strategy.setRestControllerStyle(true);
-        strategy.setInclude("document","hot","info","notice","research");
+        strategy.setInclude("applyfor","collect","research");
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setTablePrefix(pc.getModuleName() + "_");
         mpg.setStrategy(strategy);

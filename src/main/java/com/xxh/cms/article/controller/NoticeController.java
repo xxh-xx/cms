@@ -7,11 +7,15 @@ import com.xxh.cms.article.common.queryInfo.QueryInfo;
 import com.xxh.cms.article.entity.Notice;
 import com.xxh.cms.article.service.impl.NoticeServiceImpl;
 import com.xxh.cms.common.resultUtil.Result;
+import com.xxh.cms.common.resultUtil.ResultCode;
+import com.xxh.cms.common.util.DataFormatUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,6 +26,7 @@ import java.util.Map;
  * @author xxh
  * @since 2021-02-19
  */
+@Component
 public class NoticeController {
 
     private final NoticeServiceImpl noticeService;
@@ -33,23 +38,31 @@ public class NoticeController {
         this.selectAndPage = selectAndPage;
     }
 
-    @ApiOperation("分页条件查询")
-    public Result getDocuments(@ApiParam(name = "noticeQueryInfo",value = "查询条件") @RequestBody(required = false) QueryInfo queryInfo,
-                               @ApiParam(name = "current",value = "当前页数") @PathVariable int current){
+    public Result addNotice(Notice notice, List<String> picList){
+        int picMaxNumber = 2;
+        int picMinNumber = 1;
 
-        return Result.success(getNotices(current, queryInfo));
+        if (picList.size()>picMaxNumber||picList.size()<=0){
+            return Result.failure(ResultCode.PARAM_ERROR);
+        }
 
-    }
+        if (picList.size()==picMaxNumber){
+            notice.setPic(picList.get(0));
+            notice.setPic2(picList.get(1));
+        }
 
-    @ApiOperation("添加")
-    public Result addDocument(@ApiParam(name = "notice",value = "添加数据") @RequestBody Notice notice){
+        if (picList.size()==picMinNumber){
+            notice.setPic(picList.get(0));
+        }
+        notice.setTitle(notice.getName());
+        notice.setAuthor("xxx");
         noticeService.save(notice);
         return Result.success();
     }
 
     public Map<String ,Object> getNotices(int current, QueryInfo queryInfo){
         Page page = selectAndPage.getPage(current, queryInfo, noticeService, false);
-        return selectAndPage.baleResult(page);
+        return DataFormatUtil.pageDataHandle(page);
     }
 
 }

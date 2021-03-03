@@ -1,7 +1,7 @@
 package com.xxh.cms.article.service;
 
-import com.xxh.cms.article.entity.Hot;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.xxh.cms.article.entity.Hot;
 
 /**
  * <p>

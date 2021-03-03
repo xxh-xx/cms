@@ -16,6 +16,7 @@
         <mybatis-plus.version>3.4.1</mybatis-plus.version>
         <druid.version>1.2.5</druid.version>
         <swagger2.version>3.0.0</swagger2.version>
+        <fastjson.version>1.2.75</fastjson.version>
     </properties>
 
     <dependencies>
@@ -63,6 +64,11 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-boot-starter</artifactId>
             <version>${swagger2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
         </dependency>
 
         <dependency>

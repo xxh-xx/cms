@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +37,8 @@ public class SelectAndPage {
         Page page = new Page(current,size);
         QueryWrapper queryWrapper = new QueryWrapper<>();
 
+        queryWrapper.orderByDesc(dateColumn);
+
         if (queryInfo!=null&&service!=null&&isDoc!=null){
 
             Map<String,Object> allEqMap = new HashMap<>(4);
@@ -47,36 +49,21 @@ public class SelectAndPage {
 
             String name = queryInfo.getName();
             String author = queryInfo.getAuthor();
-            if (StringUtils.isNotBlank(name)){
-                queryWrapper.like(nameColumn,name);
-            }
-            if (StringUtils.isNotBlank(author)){
-                queryWrapper.like("author",author);
-            }
 
-            LocalDate startDate = queryInfo.getStartDate();
-            LocalDate endDate = queryInfo.getEndDate();
+            queryWrapper.like(StringUtils.isNotBlank(name),nameColumn,name);
+            queryWrapper.like(StringUtils.isNotBlank(author),"author",author);
 
-            if (startDate!=null&&endDate!=null){
-                queryWrapper.between(dateColumn,startDate,endDate);
-            }
+            LocalDateTime startDate = queryInfo.getStartDate();
+            LocalDateTime endDate = queryInfo.getEndDate();
+
+            queryWrapper.between(startDate!=null&&endDate!=null,dateColumn,startDate,endDate);
 
             Integer startHits = queryInfo.getStartHits();
             Integer endHits = queryInfo.getEndHits();
-            if (startHits!=null&&endHits!=null){
-                queryWrapper.between("hits",startHits,endHits);
-            }
+            queryWrapper.between(startHits!=null&&endHits!=null,"hits",startHits,endHits);
         }
 
         return (Page) service.page(page,queryWrapper);
-    }
-
-    public Map<String,Object> baleResult(Page page){
-        Map<String,Object> resultData = new HashMap<>(16);
-        resultData.put("items",page.getRecords());
-        resultData.put("total",page.getTotal());
-        resultData.put("current",page.getCurrent());
-        return  resultData;
     }
 
 }
