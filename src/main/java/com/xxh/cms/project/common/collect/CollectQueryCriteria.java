@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * @author xxh
@@ -24,11 +24,8 @@ public class CollectQueryCriteria implements Serializable {
 
     private String author;
 
-    private Date startDate;
-    private Date endDate;
-
-    private Integer startHits;
-    private Integer endHits;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
 
 
 

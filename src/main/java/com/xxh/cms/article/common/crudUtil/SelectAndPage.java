@@ -57,10 +57,6 @@ public class SelectAndPage {
             LocalDateTime endDate = queryInfo.getEndDate();
 
             queryWrapper.between(startDate!=null&&endDate!=null,dateColumn,startDate,endDate);
-
-            Integer startHits = queryInfo.getStartHits();
-            Integer endHits = queryInfo.getEndHits();
-            queryWrapper.between(startHits!=null&&endHits!=null,"hits",startHits,endHits);
         }
 
         return (Page) service.page(page,queryWrapper);

@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +28,7 @@ import java.util.Map;
  * @author xxh
  * @since 2021-03-03
  */
+@CrossOrigin
 @Api(value = "ResearchController",tags = "研究项目Api")
 @RestController
 @RequestMapping("/research")
@@ -66,13 +67,9 @@ public class ResearchController {
         String leader = queryCriteria.getLeader();
         queryWrapper.like(StringUtils.isNotBlank(leader),"leader",leader);
 
-        Date startDate = queryCriteria.getStartDate();
-        Date endDate = queryCriteria.getEndDate();
+        LocalDate startDate = queryCriteria.getStartDate();
+        LocalDate endDate = queryCriteria.getEndDate();
         queryWrapper.between(startDate!=null&&endDate!=null,"pubdate",startDate,endDate);
-
-        Integer startHits = queryCriteria.getStartHits();
-        Integer endHits = queryCriteria.getEndHits();
-        queryWrapper.between(startHits!=null&&endHits!=null,"hits",startHits,endHits);
 
         Page<Research> page = new Page<>(currentPage,pageSize);
         page = researchService.page(page, queryWrapper);

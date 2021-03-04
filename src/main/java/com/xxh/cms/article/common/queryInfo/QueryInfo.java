@@ -32,8 +32,4 @@ public class QueryInfo implements Serializable {
 
     private LocalDateTime endDate;
 
-    private Integer startHits;
-
-    private Integer endHits;
-
 }

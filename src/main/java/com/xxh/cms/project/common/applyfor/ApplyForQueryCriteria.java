@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * @author xxh
@@ -23,13 +23,10 @@ public class ApplyForQueryCriteria implements Serializable {
     private String att;
 
     @ApiModelProperty(value = "项目申报日期")
-    private Date startDate;
-    private Date endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     @ApiModelProperty(value = "项目状态")
     private String state;
-
-    private Integer startHits;
-    private Integer endHits;
 
 }

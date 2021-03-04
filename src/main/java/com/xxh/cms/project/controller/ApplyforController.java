@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +27,7 @@ import java.util.Map;
  * @author xxh
  * @since 2021-03-03
  */
+@CrossOrigin
 @RestController
 @RequestMapping("/applyfor")
 @Api(value = "ApplyforController",tags = "项目申报Api")
@@ -61,13 +62,9 @@ public class ApplyforController {
         allEqMap.put("state", queryCriteria.getState());
         queryWrapper.allEq(allEqMap,false);
 
-        Date startDate = queryCriteria.getStartDate();
-        Date endDate = queryCriteria.getEndDate();
+        LocalDate startDate = queryCriteria.getStartDate();
+        LocalDate endDate = queryCriteria.getEndDate();
         queryWrapper.between(startDate!=null&&endDate!=null,"stadate",startDate,endDate);
-
-        Integer startHits = queryCriteria.getStartHits();
-        Integer endHits = queryCriteria.getEndHits();
-        queryWrapper.between(startHits!=null&&endHits!=null,"hits",startHits,endHits);
 
         Page<Applyfor> page = new Page<>(currentPage,pageSize);
         page = applyforService.page(page, queryWrapper);

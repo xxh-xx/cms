@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +28,7 @@ import java.util.Map;
  * @author xxh
  * @since 2021-03-03
  */
+@CrossOrigin
 @Api(value = "CollectController",tags = "征集项目Api")
 @RestController
 @RequestMapping("/collect")
@@ -66,13 +67,9 @@ public class CollectController {
         String author = queryCriteria.getAuthor();
         queryWrapper.like(StringUtils.isNotBlank(author),"author",author);
 
-        Date startDate = queryCriteria.getStartDate();
-        Date endDate = queryCriteria.getEndDate();
+        LocalDateTime startDate = queryCriteria.getStartDate();
+        LocalDateTime endDate = queryCriteria.getEndDate();
         queryWrapper.between(startDate!=null&&endDate!=null,"date",startDate,endDate);
-
-        Integer startHits = queryCriteria.getStartHits();
-        Integer endHits = queryCriteria.getEndHits();
-        queryWrapper.between(startHits!=null&&endHits!=null,"hits",startHits,endHits);
 
         Page<Collect> page = new Page<>(currentPage,pageSize);
         page = collectService.page(page, queryWrapper);

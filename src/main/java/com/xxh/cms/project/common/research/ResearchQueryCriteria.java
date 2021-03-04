@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * @author xxh
@@ -25,10 +25,7 @@ public class ResearchQueryCriteria {
     private String att;
 
     @ApiModelProperty(value = "项目申报日期")
-    private Date startDate;
-    private Date endDate;
-
-    private Integer startHits;
-    private Integer endHits;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
 }
