@@ -1,5 +1,7 @@
 package com.xxh.cms;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.lang.Console;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
@@ -14,24 +16,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 @Slf4j
 @SpringBootTest
 class CmsApplicationTests {
 
     @Test
-    void contextLoads() {
+    void contextLoads(){
 
-        String str = "<img src=\"https://www.runoob.com/wp-content/uploads/2014/03/C5E357BD-65E3-4EB3-9D80-10D096F19287.jpg\"><img src=\"https://www.runoob.com/wp-content/uploads/2014/03/C5E357BD-65E3-4EB3-9D80-10D096F19287.jpg\">";
-        String regEx = "<img.*?>";
-        Pattern pattern = Pattern.compile(regEx);
-        Matcher matcher = pattern.matcher(str);
-
-        while (matcher.find()){
-            System.out.println(matcher.group());
-        }
+        String content = "D:\\Backup\\桌面\\新建文件夹\\test\\asedasdasd";
+        Console.log(FileUtil.ls(content));
 
     }
 
@@ -49,6 +42,7 @@ class CmsApplicationTests {
         gc.setSwagger2(true); //实体属性 Swagger2 注解
         gc.setDateType(DateType.ONLY_DATE);
         gc.setIdType(IdType.AUTO);
+        gc.setServiceName("%sService");//去掉Service接口的首字母I
         mpg.setGlobalConfig(gc);
 
         // 数据源配置
@@ -62,7 +56,7 @@ class CmsApplicationTests {
 
         // 包配置
         PackageConfig pc = new PackageConfig();
-        pc.setParent("com.xxh.cms.project");
+        pc.setParent("com.xxh.cms.users");
         pc.setEntity("entity");
         pc.setService("service");
         pc.setMapper("mapper");
@@ -75,7 +69,7 @@ class CmsApplicationTests {
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         strategy.setEntityLombokModel(true);
         strategy.setRestControllerStyle(true);
-        strategy.setInclude("applyfor","collect","research");
+        strategy.setInclude("persons");
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setTablePrefix(pc.getModuleName() + "_");
         mpg.setStrategy(strategy);

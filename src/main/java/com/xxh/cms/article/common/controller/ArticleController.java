@@ -1,7 +1,8 @@
 package com.xxh.cms.article.common.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.xxh.cms.article.common.crudUtil.ArticleUtil;
+import cn.hutool.core.util.StrUtil;
+import com.xxh.cms.article.common.crudutil.ArticleCache;
+import com.xxh.cms.article.common.crudutil.ArticleUtil;
 import com.xxh.cms.article.common.queryInfo.QueryInfo;
 import com.xxh.cms.article.controller.DocumentController;
 import com.xxh.cms.article.controller.HotController;
@@ -13,19 +14,17 @@ import com.xxh.cms.article.entity.Info;
 import com.xxh.cms.article.entity.Notice;
 import com.xxh.cms.common.resultUtil.Result;
 import com.xxh.cms.common.resultUtil.ResultCode;
-import com.xxh.cms.common.util.MapPaths;
+import com.xxh.cms.common.util.PathsCache;
 import com.xxh.cms.common.util.UploadFileUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -34,7 +33,7 @@ import java.util.Map;
 @CrossOrigin
 @RestController
 @RequestMapping("/article")
-@Api(value = "ArticleController",tags = "文章的管理Api")
+@Api(tags = "文章管理")
 public class ArticleController {
 
     private final DocumentController docController;
@@ -56,28 +55,56 @@ public class ArticleController {
         this.articleUtil = articleUtil;
     }
 
-    @GetMapping("/getArticles")
-    @ApiOperation("查询所有文章")
-    public Result getArticles(){
-        int current = 1;
-        Map<String, Object> doc = docController.getDoc(current, null);
-        Map<String, Object> hots = hotController.getHots(current, null);
-        Map<String, Object> info = infoController.getInfo(current, null);
-        Map<String, Object> notices = noticeController.getNotices(current, null);
-        Map<String,Object> resultData = new HashMap<>(4);
-        resultData.put("document",doc);
-        resultData.put("hot",hots);
-        resultData.put("info",info);
-        resultData.put("notice",notices);
-        return  Result.success(resultData);
+    @GetMapping("/getArticleBy/{id}")
+    @ApiOperation(value = "根据id查询文章")
+    public Result getArticleById(@ApiParam(value = "文章id",required = true) @PathVariable Integer id,
+                                 @ApiParam(value = "文章类型",required = true) @RequestParam String type,
+                                 @ApiParam(value = "操作唯一标识") @RequestParam String key){
+        if (!StrUtil.hasBlank(type)&&id!=0&&id!=null&&!StrUtil.hasBlank(key)){
+            String[] types = {"document","hot","info","notice"};
+            if (types[0].equals(type)){
+                Document document = docController.getDocumentBy(id);
+                PathsCache.addPath(key,document.getPic());
+                ArticleCache.add(type,document.getId(),document);
+                return  Result.success(document);
+            }
+            if (types[1].equals(type)){
+                Hot hot = hotController.getHotBy(id);
+                PathsCache.addPath(key,hot.getPic());
+                if (StrUtil.isNotBlank(hot.getPic2())){
+                    PathsCache.addPath(key,hot.getPic2());
+                }
+                ArticleCache.add(type,hot.getId(),hot);
+                return  Result.success(hot);
+            }
+            if (types[2].equals(type)){
+                Info info = infoController.getInfoBy(id);
+                PathsCache.addPath(key,info.getPic());
+                if (StrUtil.isNotBlank(info.getPic2())){
+                    PathsCache.addPath(key,info.getPic2());
+                }
+                ArticleCache.add(type,info.getId(),info);
+                return  Result.success(info);
+            }
+            if (types[3].equals(type)){
+                Notice notice = noticeController.getNoticeBy(id);
+                PathsCache.addPath(key,notice.getPic());
+                if (StrUtil.isNotBlank(notice.getPic2())){
+                    PathsCache.addPath(key,notice.getPic2());
+                }
+                ArticleCache.add(type,notice.getId(),notice);
+                return  Result.success(notice);
+            }
+        }
+        return Result.failure(ResultCode.PARAM_ERROR);
     }
 
     @PostMapping("/getArticle/{current}")
-    @ApiOperation("查询指定类型指定条件的文章")
-    public Result getArticleByType(@ApiParam(name = "type",value = "文章类型",required = true) @RequestParam String type,
-                                   @ApiParam(name = "queryInfo",value = "查询条件") @RequestBody QueryInfo queryInfo,
-                                   @ApiParam(name = "current",value = "当前页",required = true) @PathVariable int current){
-        if (StringUtils.isNotBlank(type)&&queryInfo!=null&&current!=0){
+    @ApiOperation(value = "查询文章")
+    public Result getArticleByType(@ApiParam(value = "文章类型",required = true) @RequestParam String type,
+                                   @ApiParam(value = "查询条件") @RequestBody(required = false) QueryInfo queryInfo,
+                                   @ApiParam(value = "当前页",required = true) @PathVariable int current){
+        if (StrUtil.isNotBlank(type)&&queryInfo!=null&&current!=0){
             String[] types = {"document","hot","info","notice"};
             if (types[0].equals(type)){
                 Map<String, Object> doc = docController.getDoc(current, queryInfo);
@@ -100,72 +127,88 @@ public class ArticleController {
     }
 
     @PostMapping("/addArticle")
-    public Result addArticle(@ApiParam(name = "type",value = "文章类型",required = true) @RequestParam String type,
-                             @ApiParam(name = "key",value = "标识",required = true) @RequestParam String key,
-                             @ApiParam(name = "article",value = "文章信息",required = true) @RequestBody Hot hot){
+    @ApiOperation(value = "添加文章")
+    public Result addArticle(@ApiParam(value = "文章类型",required = true) @RequestParam String type,
+                             @ApiParam(value = "唯一标识",required = true) @RequestParam String key,
+                             @ApiParam(value = "文章信息",required = true) @RequestBody Object article){
 
-        if (StringUtils.isBlank(type)||hot==null){
-            return Result.failure(ResultCode.PARAM_ERROR);
-        }
-
-        if (!articleUtil.verification(hot)){
-            return Result.failure(ResultCode.PARAM_ERROR);
-        }
-
-        List<String> picList = articleUtil.processingPictures(hot.getContent(), key);
-
-        MapPaths.removePaths(key);
-
-        String hotString = JSON.toJSONString(hot);
-
-        String[] types = {"document","hot","info","notice"};
-        if (types[0].equals(type)){
-            Document document = new Document();
-            document.setTitle(hot.getName());
-            document.setSubtitle(hot.getSubname());
-            document.setSource(hot.getSource());
-            document.setContent(hot.getContent());
-            document.setCid(hot.getCid());
-            document.setAtt(hot.getAtt());
-            document.setResume(hot.getResume());
-            docController.addDocument(document,picList);
-            return  Result.success();
-        }
-        if (types[1].equals(type)){
-            hotController.addHot(hot,picList);
-            return  Result.success();
-        }
-        if (types[2].equals(type)){
-            Info info = JSON.parseObject(hotString, Info.class);
-            infoController.addInfo(info,picList);
-            return  Result.success();
-        }
-        if (types[3].equals(type)){
-            Notice notice = JSON.parseObject(hotString, Notice.class);
-            noticeController.addNotice(notice,picList);
-            return  Result.success();
+        boolean b = articleUtil.updateAndAdd(article, type, key, "add");
+        if (!b){
+            return Result.failure(ResultCode.ADD_ERROR);
         }
 
         return Result.success();
     }
 
+    @PutMapping("/updateArticle")
+    @ApiOperation(value = "修改文章")
+    public Result updateArticle(@ApiParam(value = "文章类型",required = true) @RequestParam String type,
+                                @ApiParam(value = "标识",required = true) @RequestParam String key,
+                                @ApiParam(value = "文章信息",required = true) @RequestBody Object article){
+
+        boolean b = articleUtil.updateAndAdd(article, type, key, "update");
+
+        if (!b){
+            return Result.failure(ResultCode.UPDATE_ERROR);
+        }
+
+        return Result.success();
+
+    }
+
+    @DeleteMapping("/deleteArticle/{id}")
+    public Result deleteArticle(@ApiParam(value = "文章id",required = true) @PathVariable Integer id,
+                                @ApiParam(value = "文章类型",required = true) @RequestParam String type){
+
+        if (StrUtil.isNotBlank(type)&&id!=0&&id!=null){
+            String[] types = {"document","hot","info","notice"};
+            if (types[0].equals(type)){
+                Document document = docController.getDocumentBy(id);
+                if (docController.deleteDocument(id)){
+                    uploadFileUtil.deleteFile(Arrays.asList(document.getPic()));
+                    return Result.success();
+                }
+            }
+            if (types[1].equals(type)){
+                Hot hot = hotController.getHotBy(id);
+                if (hotController.deleteHot(id)){
+                    uploadFileUtil.deleteFile(Arrays.asList(hot.getPic(),hot.getPic2()));
+                    return Result.success();
+                }
+            }
+            if (types[2].equals(type)){
+                Info info = infoController.getInfoBy(id);
+                if (infoController.deleteInfo(id)){
+                    uploadFileUtil.deleteFile(Arrays.asList(info.getPic(),info.getPic2()));
+                    return Result.success();
+                }
+            }
+            if (types[3].equals(type)){
+                Notice notice = noticeController.getNoticeBy(id);
+                if (noticeController.deleteNotice(id)){
+                    uploadFileUtil.deleteFile(Arrays.asList(notice.getPic(),notice.getPic2()));
+                    return Result.success();
+                }
+            }
+        }
+        return Result.failure(ResultCode.PARAM_ERROR);
+
+    }
+
+
+
     @PostMapping("/updateFile")
-    @ApiOperation("上传图片")
-    public Result uploadImage(@RequestParam MultipartFile multipartFile,
-                              @RequestParam String key){
+    @ApiOperation(value = "上传文章图片")
+    public Result uploadImage(@ApiParam(value = "图片",required = true) @RequestParam MultipartFile multipartFile,
+                              @ApiParam(value = "标识",required = true) @RequestParam String key){
 
         String path = "images/article/"+ LocalDate.now();
 
-        String location = uploadFileUtil.uploadImage(multipartFile, path);
+        Map<String, String> result = uploadFileUtil.uploadImage(multipartFile, path, key);
 
-        if (StringUtils.isBlank(location)){
+        if (result==null){
             return Result.failure(ResultCode.UPLOAD_IMAGE_ERROR);
         }
-
-        Map<String,String> result = new HashMap<>(1);
-
-        result.put("location",location);
-        MapPaths.addPaths(location,key);
 
         return Result.success(result);
 

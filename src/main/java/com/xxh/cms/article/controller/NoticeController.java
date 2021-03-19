@@ -2,18 +2,15 @@ package com.xxh.cms.article.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.xxh.cms.article.common.crudUtil.SelectAndPage;
+import com.xxh.cms.article.common.crudutil.ArticleCache;
+import com.xxh.cms.article.common.crudutil.ArticleUtil;
+import com.xxh.cms.article.common.crudutil.SelectAndPage;
 import com.xxh.cms.article.common.queryInfo.QueryInfo;
 import com.xxh.cms.article.entity.Notice;
 import com.xxh.cms.article.service.impl.NoticeServiceImpl;
-import com.xxh.cms.common.resultUtil.Result;
-import com.xxh.cms.common.resultUtil.ResultCode;
 import com.xxh.cms.common.util.DataFormatUtil;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Map;
@@ -38,31 +35,44 @@ public class NoticeController {
         this.selectAndPage = selectAndPage;
     }
 
-    public Result addNotice(Notice notice, List<String> picList){
-        int picMaxNumber = 2;
-        int picMinNumber = 1;
+    public boolean addNotice(Notice notice, List<String> picList){
 
-        if (picList.size()>picMaxNumber||picList.size()<=0){
-            return Result.failure(ResultCode.PARAM_ERROR);
-        }
-
-        if (picList.size()==picMaxNumber){
-            notice.setPic(picList.get(0));
-            notice.setPic2(picList.get(1));
-        }
-
-        if (picList.size()==picMinNumber){
-            notice.setPic(picList.get(0));
+        if (ArticleUtil.processingAdd(notice,picList)==null){
+            return false;
         }
         notice.setTitle(notice.getName());
         notice.setAuthor("xxx");
-        noticeService.save(notice);
-        return Result.success();
+        return noticeService.save(notice);
+    }
+
+    public boolean updateNotice(Notice notice, List<String> picList){
+
+        if (ArticleUtil.processingAdd(notice,picList)==null){
+            return false;
+        }
+
+        if (!noticeService.updateById(notice)){
+            return false;
+        }
+        ArticleCache.remove("notice",notice.getId());
+        return true;
     }
 
     public Map<String ,Object> getNotices(int current, QueryInfo queryInfo){
         Page page = selectAndPage.getPage(current, queryInfo, noticeService, false);
         return DataFormatUtil.pageDataHandle(page);
+    }
+
+    public Notice getNoticeBy(Integer id){
+        Notice notice = noticeService.getById(id);
+        return notice;
+    }
+
+    public boolean deleteNotice(Integer id){
+        if (id!=0&&id!=null){
+            return noticeService.removeById(id);
+        }
+        return false;
     }
 
 }

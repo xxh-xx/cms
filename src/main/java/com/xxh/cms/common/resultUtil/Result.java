@@ -1,6 +1,7 @@
 package com.xxh.cms.common.resultUtil;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -9,11 +10,14 @@ import java.io.Serializable;
  * @author xxh
  */
 @Data
-@ApiModel(value = "Result对象",description = "返回字段")
+@ApiModel(value = "统一返回格式")
 public class Result implements Serializable {
 
+    @ApiModelProperty(value = "状态码")
     private Integer code;
+    @ApiModelProperty(value = "返回信息")
     private String message;
+    @ApiModelProperty(value = "返回数据")
     private Object data;
 
     private Result(ResultCode resultCode,Object data){

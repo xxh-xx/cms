@@ -1,13 +1,16 @@
 package com.xxh.cms.project.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
-import java.util.Date;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+import java.time.LocalDate;
 
 /**
  * <p>
@@ -43,10 +46,10 @@ public class Research implements Serializable {
     private String att;
 
     @ApiModelProperty(value = "项目开始日期")
-    private Date stadate;
+    private LocalDate stadate;
 
     @ApiModelProperty(value = "项目完成日期")
-    private Date stodate;
+    private LocalDate stodate;
 
     private String tel;
 
@@ -54,10 +57,12 @@ public class Research implements Serializable {
     private String brief;
 
     @ApiModelProperty(value = "项目申报日期")
-    private Date pubdate;
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDate pubdate;
 
     private String content;
 
+    @TableField(fill = FieldFill.INSERT)
     private Integer hits;
 
 

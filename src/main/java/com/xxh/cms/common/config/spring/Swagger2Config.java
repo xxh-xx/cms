@@ -10,11 +10,13 @@ import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * @author xxh
  */
 @Configuration
+@EnableSwagger2
 public class Swagger2Config {
 
     @Bean
@@ -25,6 +27,7 @@ public class Swagger2Config {
                 .title("内容管理")
                 //api描述
                 .description("内容管理相关接口描述")
+                .termsOfServiceUrl("http://localhost:8001")
                 //版本号
                 .version("1.0.0")
                 //本API负责人的联系信息

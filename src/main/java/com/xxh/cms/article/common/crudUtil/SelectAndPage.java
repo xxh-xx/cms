@@ -1,10 +1,10 @@
-package com.xxh.cms.article.common.crudUtil;
+package com.xxh.cms.article.common.crudutil;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xxh.cms.article.common.queryInfo.QueryInfo;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -50,8 +50,8 @@ public class SelectAndPage {
             String name = queryInfo.getName();
             String author = queryInfo.getAuthor();
 
-            queryWrapper.like(StringUtils.isNotBlank(name),nameColumn,name);
-            queryWrapper.like(StringUtils.isNotBlank(author),"author",author);
+            queryWrapper.like(StrUtil.isNotBlank(name),nameColumn,name);
+            queryWrapper.like(StrUtil.isNotBlank(author),"author",author);
 
             LocalDateTime startDate = queryInfo.getStartDate();
             LocalDateTime endDate = queryInfo.getEndDate();

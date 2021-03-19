@@ -7,7 +7,12 @@ public enum ResultCode {
 
     SUCCESS(2000,"成功"),
     PARAM_ERROR(1000,"参数错误"),
-    UPLOAD_IMAGE_ERROR(1001,"上传图片失败");
+    UPLOAD_IMAGE_ERROR(1001,"上传图片失败"),
+    ADD_ERROR(1002,"添加失败"),
+    RESPONSE_ERROR(1003,"响应错误"),
+    UPDATE_ERROR(1004,"修改失败"),
+    DELETE_ERROR(1005,"删除失败"),
+    CODE_ERROR(1006,"验证码错误");
 
     /**
      * code:状态码

@@ -2,18 +2,15 @@ package com.xxh.cms.article.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.xxh.cms.article.common.crudUtil.SelectAndPage;
+import com.xxh.cms.article.common.crudutil.ArticleCache;
+import com.xxh.cms.article.common.crudutil.ArticleUtil;
+import com.xxh.cms.article.common.crudutil.SelectAndPage;
 import com.xxh.cms.article.common.queryInfo.QueryInfo;
 import com.xxh.cms.article.entity.Hot;
 import com.xxh.cms.article.service.impl.HotServiceImpl;
-import com.xxh.cms.common.resultUtil.Result;
-import com.xxh.cms.common.resultUtil.ResultCode;
 import com.xxh.cms.common.util.DataFormatUtil;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Map;
@@ -38,32 +35,43 @@ public class HotController {
         this.selectAndPage = selectAndPage;
     }
 
-    public Result addHot(Hot hot, List<String> picList){
+    public boolean addHot(Hot hot, List<String> picList){
 
-        int picMaxNumber = 2;
-        int picMinNumber = 1;
-
-        if (picList.size()>picMaxNumber||picList.size()<=0){
-            return Result.failure(ResultCode.PARAM_ERROR);
+        if (ArticleUtil.processingAdd(hot,picList)==null){
+            return false;
         }
 
-        if (picList.size()==picMaxNumber){
-            hot.setPic(picList.get(0));
-            hot.setPic2(picList.get(1));
-        }
-
-        if (picList.size()==picMinNumber){
-            hot.setPic(picList.get(0));
-        }
         hot.setTitle(hot.getName());
         hot.setAuthor("xxx");
-        hotService.save(hot);
-        return Result.success();
+        return hotService.save(hot);
+    }
+
+    public boolean updateHot(Hot hot, List<String> picList){
+        if (ArticleUtil.processingAdd(hot,picList)==null){
+            return false;
+        }
+        if (!hotService.updateById(hot)){
+            return false;
+        }
+        ArticleCache.remove("hot",hot.getId());
+        return true;
     }
 
     public Map<String ,Object> getHots(int current, QueryInfo queryInfo){
         Page page = selectAndPage.getPage(current, queryInfo, hotService, false);
         return DataFormatUtil.pageDataHandle(page);
+    }
+
+    public Hot getHotBy(Integer id){
+        Hot hot = hotService.getById(id);
+        return hot;
+    }
+
+    public boolean deleteHot(Integer id){
+        if (id!=0&&id!=null){
+            return hotService.removeById(id);
+        }
+        return false;
     }
 
 }

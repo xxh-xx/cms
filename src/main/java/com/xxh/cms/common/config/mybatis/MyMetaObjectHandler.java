@@ -17,6 +17,8 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         this.strictInsertFill(metaObject,"pubdate", LocalDate.class,LocalDate.now());
         this.strictInsertFill(metaObject,"hits",Integer.class,0);
         this.strictInsertFill(metaObject,"date", LocalDateTime.class,LocalDateTime.now());
+        this.strictInsertFill(metaObject,"createdDate",LocalDate.class,LocalDate.now());
+        this.strictInsertFill(metaObject,"verify",Integer.class,0);
     }
 
     @Override
