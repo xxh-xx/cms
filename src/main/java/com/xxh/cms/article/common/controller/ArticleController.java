@@ -1,5 +1,7 @@
 package com.xxh.cms.article.common.controller;
 
+import cn.hutool.core.date.LocalDateTimeUtil;
+import cn.hutool.core.text.StrBuilder;
 import cn.hutool.core.util.StrUtil;
 import com.xxh.cms.article.common.crudutil.ArticleCache;
 import com.xxh.cms.article.common.crudutil.ArticleUtil;
@@ -199,10 +201,13 @@ public class ArticleController {
 
     @PostMapping("/updateFile")
     @ApiOperation(value = "上传文章图片")
-    public Result uploadImage(@ApiParam(value = "图片",required = true) @RequestParam MultipartFile multipartFile,
+    public Result uploadImage(@ApiParam(value = "图片",required = true) @RequestPart MultipartFile multipartFile,
                               @ApiParam(value = "标识",required = true) @RequestParam String key){
 
-        String path = "images/article/"+ LocalDate.now();
+        StrBuilder strBuilder = StrBuilder.create();
+        strBuilder.append("images/article/")
+                  .append(LocalDateTimeUtil.format(LocalDate.now(),"yyyy/MM/dd"));
+        String path = strBuilder.toString();
 
         Map<String, String> result = uploadFileUtil.uploadImage(multipartFile, path, key);
 

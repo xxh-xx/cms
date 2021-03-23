@@ -1,7 +1,5 @@
 package com.xxh.cms;
 
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.lang.Console;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
@@ -23,8 +21,7 @@ class CmsApplicationTests {
     @Test
     void contextLoads(){
 
-        String content = "D:\\Backup\\桌面\\新建文件夹\\test\\asedasdasd";
-        Console.log(FileUtil.ls(content));
+
 
     }
 

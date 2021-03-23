@@ -1,5 +1,6 @@
 package com.xxh.cms.project.common.controller;
 
+import cn.hutool.core.date.LocalDateTimeUtil;
 import com.xxh.cms.common.resultUtil.Result;
 import com.xxh.cms.common.resultUtil.ResultCode;
 import com.xxh.cms.common.util.UploadFileUtil;
@@ -33,7 +34,7 @@ public class ComController {
     public Result uploadImage(@RequestParam MultipartFile multipartFile,
                               @RequestParam String key){
 
-        String path = "images/project/"+ LocalDate.now();
+        String path = "images/project/"+ LocalDateTimeUtil.format(LocalDate.now(),"yyyy/MM/dd");
 
         Map<String, String> result = uploadFileUtil.uploadImage(multipartFile, path, key);
 

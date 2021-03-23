@@ -12,7 +12,9 @@ public enum ResultCode {
     RESPONSE_ERROR(1003,"响应错误"),
     UPDATE_ERROR(1004,"修改失败"),
     DELETE_ERROR(1005,"删除失败"),
-    CODE_ERROR(1006,"验证码错误");
+    CODE_ERROR(1006,"验证码错误"),
+    LOGIN_ERROR(1007,"登录失败"),
+    TOKEN_ERROR(1008,"token错误");
 
     /**
      * code:状态码

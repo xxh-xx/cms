@@ -99,8 +99,10 @@ public class CollectController {
         LocalDateTime startDate = queryCriteria.getStartDate();
         LocalDateTime endDate = queryCriteria.getEndDate();
 
-        if (startDate.isAfter(endDate)){
-            return Result.failure(ResultCode.PARAM_ERROR);
+        if (startDate!=null&&endDate!=null){
+            if (startDate.isAfter(endDate)){
+                return Result.failure(ResultCode.PARAM_ERROR);
+            }
         }
 
         queryWrapper.between(startDate!=null&&endDate!=null,"date",startDate,endDate);

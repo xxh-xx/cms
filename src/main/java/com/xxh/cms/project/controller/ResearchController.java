@@ -79,8 +79,10 @@ public class ResearchController {
         LocalDate startDate = queryCriteria.getStartDate();
         LocalDate endDate = queryCriteria.getEndDate();
 
-        if (startDate.isAfter(endDate)){
-            return Result.failure(ResultCode.PARAM_ERROR);
+        if (startDate!=null&&endDate!=null){
+            if (startDate.isAfter(endDate)){
+                return Result.failure(ResultCode.PARAM_ERROR);
+            }
         }
 
         queryWrapper.between(startDate!=null&&endDate!=null,"pubdate",startDate,endDate);
@@ -93,8 +95,8 @@ public class ResearchController {
     }
 
     @GetMapping("/getResearchBy/{id}")
-    @ApiOperation(value = "根据id查找征集项目")
-    public Result getResearchBy(@ApiParam(value = "征集项目id") @PathVariable Integer id){
+    @ApiOperation(value = "根据id查找研究项目")
+    public Result getResearchBy(@ApiParam(value = "研究项目id") @PathVariable Integer id){
         if (StrUtil.hasBlank(id.toString())){
             return Result.failure(ResultCode.PARAM_ERROR);
         }

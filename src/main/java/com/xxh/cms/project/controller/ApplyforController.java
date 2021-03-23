@@ -69,8 +69,10 @@ public class ApplyforController {
 
         LocalDate startDate = queryCriteria.getStartDate();
         LocalDate endDate = queryCriteria.getEndDate();
-        if (startDate.isAfter(endDate)){
-            return Result.failure(ResultCode.PARAM_ERROR);
+        if (startDate!=null&&endDate!=null){
+            if (startDate.isAfter(endDate)){
+                return Result.failure(ResultCode.PARAM_ERROR);
+            }
         }
         queryWrapper.between(startDate!=null&&endDate!=null,"stadate",startDate,endDate);
 

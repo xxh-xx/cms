@@ -30,8 +30,9 @@ import java.time.LocalDate;
  * @author xxh
  * @since 2021-03-17
  */
+@CrossOrigin
 @RestController
-@RequestMapping("/users/experts")
+@RequestMapping("/experts")
 @Api(tags = "专家管理")
 public class ExpertsController {
 
