@@ -20,6 +20,7 @@
         <easy-captcha.version>1.6.2</easy-captcha.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <java-jwt.version>3.14.0</java-jwt.version>
+        <poi-ooxml.version>5.0.0</poi-ooxml.version>
 
         <swagger2.version>3.0.0</swagger2.version>
     </properties>
@@ -60,6 +61,11 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>${hutool.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi-ooxml.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

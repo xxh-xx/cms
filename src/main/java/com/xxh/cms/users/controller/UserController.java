@@ -4,9 +4,12 @@ import cn.hutool.core.util.StrUtil;
 import com.xxh.cms.common.resultUtil.Result;
 import com.xxh.cms.common.resultUtil.ResultCode;
 import com.xxh.cms.common.util.JwtUtil;
+import com.xxh.cms.users.common.TokenCache;
 import com.xxh.cms.users.entity.User;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,10 +34,22 @@ public class UserController {
             return Result.failure(ResultCode.LOGIN_ERROR);
         }
 
-        Map<String,String> result = new HashMap<>(1);
-        result.put("user_id","1");
+        Map<String,Object> result = new HashMap<>(3);
+        if (name.equals("admin")){
+            result.put("userId","1");
+            result.put("name","xxh");
+            result.put("avatar","https://ae01.alicdn.com/kf/Ufe669619876446adacfe991725c742dfe.jpg");
+            result.put("roles", Arrays.asList("admin"));
+        }else {
+            result.put("userId","2");
+            result.put("name","hhh");
+            result.put("avatar","https://ae01.alicdn.com/kf/Ufe669619876446adacfe991725c742dfe.jpg");
+            result.put("roles", Arrays.asList("expert"));
+        }
 
         String token = JwtUtil.createToken(result);
+
+        TokenCache.add(result.get("userId").toString(),token);
 
         result = new HashMap<>(1);
         result.put("token",token);
@@ -53,11 +68,23 @@ public class UserController {
             return Result.failure(ResultCode.TOKEN_ERROR);
         }
 
-        Map<String,String> result = new HashMap<>(2);
-        result.put("name","xxh");
-        result.put("avatar","https://ae01.alicdn.com/kf/Ufe669619876446adacfe991725c742dfe.jpg");
+        Map<String, Object> result = JwtUtil.getClaim(token);
 
         return Result.success(result);
+    }
+
+    @PostMapping("/logout")
+    public Result logout(HttpServletRequest request){
+
+        String token = request.getHeader("X-Token");
+        if (!StrUtil.hasBlank(token)&&JwtUtil.verifyToken(token)){
+            Map<String, Object> userMap = JwtUtil.getClaim(token);
+            TokenCache.remove(userMap.get("userId").toString());
+            return Result.success();
+        }
+
+        return Result.failure(ResultCode.TOKEN_ERROR);
+
     }
 
 }
